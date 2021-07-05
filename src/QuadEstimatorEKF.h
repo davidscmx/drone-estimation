@@ -30,29 +30,30 @@ public:
   virtual void UpdateFromIMU(V3F accel, V3F gyro);
   virtual void UpdateFromGPS(V3F pos, V3F vel);
   virtual void UpdateFromBaro(float z) {};
-	virtual void UpdateFromMag(float magYaw);
+  virtual void UpdateFromMag(float magYaw);
 
   static const int QUAD_EKF_NUM_STATES = 7;
 
   // process covariance
-	MatrixXf Q;
+  MatrixXf Q;
 
-	// GPS measurement covariance
-	MatrixXf R_GPS;
+  // GPS measurement covariance
+  MatrixXf R_GPS;
 
-	// Magnetometer measurement covariance
-	MatrixXf R_Mag;
+  // Magnetometer measurement covariance
+  MatrixXf R_Mag;
 
   // attitude filter state
   float pitchEst, rollEst;
-  float accelPitch, accelRoll; // raw pitch/roll angles as calculated from last accelerometer.. purely for graphing.
-	V3F accelG;
-	V3F lastGyro;
+  // raw pitch/roll angles as calculated from last accelerometer.. purely for graphing.
+  float accelPitch, accelRoll;
+  V3F accelG;
+  V3F lastGyro;
 
   // generic EKF update
   // z: measurement
   // H: Jacobian of observation function evaluated at the current estimated state
-  // R: observation error model covariance 
+  // R: observation error model covariance
   // zFromX: measurement prediction based on current state
   void Update(VectorXf& z, MatrixXf& H, MatrixXf& R, VectorXf& zFromX);
 
@@ -76,7 +77,7 @@ public:
 
 	float posErrorMag, velErrorMag;
 
-	virtual V3F EstimatedPosition() 
+	virtual V3F EstimatedPosition()
 	{
 		return V3F(ekfState(0), ekfState(1), ekfState(2));
 	}

@@ -20,7 +20,7 @@ This project will continue to use the C++ development environment you set up in 
  ```
 
  2. Import the code into your IDE like done in the [Controls C++ project](https://github.com/udacity/FCND-Controls-CPP#development-environment-setup)
- 
+
  3. You should now be able to compile and run the estimation simulator just as you did in the controls project
 
 
@@ -85,11 +85,23 @@ For the controls project, the simulator was working with a perfect set of sensor
 
 3. Process the logged files to figure out the standard deviation of the the GPS X signal and the IMU Accelerometer X signal.
 
+Task: The calculated standard deviations for the GPX X signal and the IMU
+Acceleromenter X signal are calculated with `python_scripts/calculate_std.py`
+and the results are:
+
+```
+('QuadGPSX std:', 0.68835404325708893)
+('QuadIMUAX std:', 0.47471341799108197)
+```
+
 4. Plug in your result into the top of `config/6_Sensornoise.txt`.  Specially, set the values for `MeasuredStdDev_GPSPosXY` and `MeasuredStdDev_AccelXY` to be the values you have calculated.
 
 5. Run the simulator. If your values are correct, the dashed lines in the simulation will eventually turn green, indicating you’re capturing approx 68% of the respective measurements (which is what we expect within +/- 1 sigma bound for a Gaussian noise model)
 
 ***Success criteria:*** *Your standard deviations should accurately capture the value of approximately 68% of the respective measurements.*
+
+
+![Step 1: Completed](images/task1.png)
 
 NOTE: Your answer should match the settings in `SimulatedSensors.txt`, where you can also grab the simulated noise parameters for all the other sensors.
 

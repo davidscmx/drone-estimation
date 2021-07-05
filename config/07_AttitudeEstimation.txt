@@ -17,7 +17,7 @@ Quad.ControlConfig = QuadControlParams
 Quad.Sensors = SimIMU
 # use a perfect IMU
 SimIMU.AccelStd = 0,0,0
-SimIMU.GyroStd = 0,0,0
+SimIMU.GyroStd  = 0,0,0
 
 # Initial state & reference trajectory
 Quad.InitialPos=0,0,-1
