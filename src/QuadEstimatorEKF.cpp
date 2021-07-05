@@ -70,7 +70,7 @@ void QuadEstimatorEKF::Init()
   posErrorMag = velErrorMag = 0;
 }
 
-void QuadEstimatorEKF::UpdateFromIMU(V3F accel, V3F gyro)
+void QuadEstimatorEKF::UpdateFromIMU(V3F accelerometer, V3F gyro_rates)
 {
   // Improve a complementary filter-type attitude filter
   //
@@ -92,25 +92,46 @@ void QuadEstimatorEKF::UpdateFromIMU(V3F accel, V3F gyro)
   // (replace the code below)
   // make sure you comment it out when you add your own code -- otherwise e.g. you might integrate yaw twice
 
-  float predictedPitch = pitchEst + dtIMU * gyro.y;
-  float predictedRoll = rollEst + dtIMU * gyro.x;
-  ekfState(6) = ekfState(6) + dtIMU * gyro.z;	// yaw
+  //float predictedPitch = pitchEst + dtIMU * gyro.y;
+  //float predictedRoll = rollEst + dtIMU * gyro.x;
+  //ekfState(6) = ekfState(6) + dtIMU * gyro.z;	// yaw
 
   // normalize yaw to -pi .. pi
+  float phi = rollEst; // rollphi
+  float theta = pitchEst; // pitta
+
+  Mat3x3F R = Mat3x3F::Zeros();
+  R(0,0) = 1;
+  R(0,1) = sin(phi) * tan(theta);
+  R(0,2) = cos(phi) * tan(theta);
+  R(1,1) = cos(phi);
+  R(1,2) = -sin(phi);
+  R(2,1) = sin(phi) / cos(theta);
+  R(2,2) = cos(phi) / cos(theta);
+
+  // Convert from body rates to Euler angles
+  V3F angular_velocities = R * gyro_rates;
+
+  // Motion Update
+  float predictedRoll = rollEst + dtIMU * angular_velocities.x;
+  float predictedPitch = pitchEst + dtIMU * angular_velocities.y;
+  ekfState(6) = ekfState(6) + dtIMU * angular_velocities.z;
+
   if (ekfState(6) > F_PI) ekfState(6) -= 2.f*F_PI;
   if (ekfState(6) < -F_PI) ekfState(6) += 2.f*F_PI;
 
-  /////////////////////////////// END STUDENT CODE ////////////////////////////
+  // get roll/pitch from the accelerometer
+  accelRoll = atan2f(accelerometer.y, accelerometer.z);
+  accelPitch = atan2f(-accelerometer.x, 9.81f);
 
-  // CALCULATE UPDATE
-  accelRoll = atan2f(accel.y, accel.z);
-  accelPitch = atan2f(-accel.x, 9.81f);
+  // In general c1 close to one, c2 close to zero
+  float c1 = attitudeTau / (attitudeTau + dtIMU);
+  float c2 = dtIMU / (attitudeTau + dtIMU);
 
-  // FUSE INTEGRATION AND UPDATE
-  rollEst = attitudeTau / (attitudeTau + dtIMU) * (predictedRoll)+dtIMU / (attitudeTau + dtIMU) * accelRoll;
-  pitchEst = attitudeTau / (attitudeTau + dtIMU) * (predictedPitch)+dtIMU / (attitudeTau + dtIMU) * accelPitch;
+  rollEst = c1 * predictedRoll + c2 * accelRoll;
+  pitchEst=  c1 * predictedPitch + c2 * accelPitch;
 
-  lastGyro = gyro;
+  lastGyro = gyro_rates;
 }
 
 void QuadEstimatorEKF::UpdateTrueError(V3F truePos, V3F trueVel, Quaternion<float> trueAtt)

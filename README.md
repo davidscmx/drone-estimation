@@ -123,6 +123,20 @@ In the screenshot above the attitude estimation using linear scheme (left) and u
 
 ***Success criteria:*** *Your attitude estimator needs to get within 0.1 rad for each of the Euler angles for at least 3 seconds.*
 
+
+#### Task 2 Completion
+
+To complete this task the following formulas from the lectures where used:
+
+![Complementary Filter Math](images/comp_filter_math.png)
+
+But first we convert the body rates from the gyro to the world-coordinate Euler
+angles and we use these to get the `predictedRoll` and `predictedPitch`.
+The measured roll and pitch is obtained from the accelerometer values. The figure
+below shows that with this implementation the test is passed.
+
+![Complementary Filter Math](images/task2.png)
+
 **Hint: see section 7.1.2 of [Estimation for Quadrotors](https://www.overleaf.com/read/vymfngphcccj) for a refresher on a good non-linear complimentary filter for attitude using quaternions.**
 
 
