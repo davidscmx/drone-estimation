@@ -181,7 +181,7 @@ Another set of bad examples is shown below for having a `QVelXYStd` too large (f
 
 ***Success criteria:*** *This step doesn't have any specific measurable criteria being checked.*
 
-#### Task 3 Realization
+#### Task 3 Implementation
 
 For this task the state vector containing `x,y,z,x_dot,y_dot,z_dot,yaw` is advanced using
 the state transition matrix presented in the lectures (Eq 49). This is a straightforward integration for `x,y,z`. For `x_dot,y_dot,z_dot` we need to convert the acceleration from the body frame to the inertial frame. We used the provided quaternion to achieve this.
@@ -192,7 +192,7 @@ The second part of this task is to create the partial derivative matrix that is 
 The matrix is obtained from the lectures and the corresponding entries are filled in the `GetRbgPrime`
 function. Then this funcion is used in the `Predict` function. Since the state has already been predicted, is this function all the is left to predict is the covariance matrix.
 
-![Predict function results](images/task2.png)
+![Predict function results](images/task3.png)
 
 ### Step 4: Magnetometer Update ###
 
@@ -214,6 +214,11 @@ Up until now we've only used the accelerometer and gyro for our state estimation
 
 **Hint: see section 7.3.2 of [Estimation for Quadrotors](https://www.overleaf.com/read/vymfngphcccj) for a refresher on the magnetometer update.**
 
+#### Task 4 Implementation
+
+This is a simple measurement update taken from the `Estimation for Quadrotors` document. Below an image of the result:
+
+![Predict function results](images/task4_yaw.png)
 
 ### Step 5: Closed Loop + GPS Update ###
 
