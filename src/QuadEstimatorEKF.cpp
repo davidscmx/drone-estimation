@@ -87,11 +87,7 @@ void QuadEstimatorEKF::UpdateFromIMU(V3F accelerometer, V3F gyro_rates)
   //    2) use the Quaternion<float> class, which has a handy FromEuler123_RPY function for creating a quaternion from Euler Roll/PitchYaw
   //       (Quaternion<float> also has a IntegrateBodyRate function, though this uses quaternions, not Euler angles)
 
-  ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
   // SMALL ANGLE GYRO INTEGRATION:
-  // (replace the code below)
-  // make sure you comment it out when you add your own code -- otherwise e.g. you might integrate yaw twice
-
   //float predictedPitch = pitchEst + dtIMU * gyro.y;
   //float predictedRoll = rollEst + dtIMU * gyro.x;
   //ekfState(6) = ekfState(6) + dtIMU * gyro.z;	// yaw
@@ -129,7 +125,7 @@ void QuadEstimatorEKF::UpdateFromIMU(V3F accelerometer, V3F gyro_rates)
   float c2 = dtIMU / (attitudeTau + dtIMU);
 
   rollEst = c1 * predictedRoll + c2 * accelRoll;
-  pitchEst=  c1 * predictedPitch + c2 * accelPitch;
+  pitchEst = c1 * predictedPitch + c2 * accelPitch;
 
   lastGyro = gyro_rates;
 }
@@ -179,11 +175,15 @@ VectorXf QuadEstimatorEKF::PredictState(VectorXf curState, float dt, V3F accel, 
   // - the yaw integral is already done in the IMU update. Be sure not to integrate it again here
 
   Quaternion<float> attitude = Quaternion<float>::FromEuler123_RPY(rollEst, pitchEst, curState(6));
+  //predict x, y and z position
+  predictedState(0) = curState(0) + dt*curState(3);
+  predictedState(1) = curState(1) + dt*curState(4);
+  predictedState(2) = curState(2) + dt*curState(5);
 
-  ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
-
-
-  /////////////////////////////// END STUDENT CODE ////////////////////////////
+  V3F accel_inertial = attitude.Rotate_BtoI(accel);
+  predictedState(3) = curState(3) + accel_inertial.x*dt;
+  predictedState(4) = curState(4) + accel_inertial.y*dt;
+  predictedState(5) = curState(5) + accel_inertial.z*dt - CONST_GRAVITY*dt;
 
   return predictedState;
 }
@@ -208,6 +208,22 @@ MatrixXf QuadEstimatorEKF::GetRbgPrime(float roll, float pitch, float yaw)
   //   that your calculations are reasonable
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
+  // From "Estimation for Quadrotors". (Eq. 52)
+  float theta = pitch;
+	float phi = roll;
+	float psi = yaw;
+
+	RbgPrime(0, 0) = (-(cos(theta) * sin(psi)));
+	RbgPrime(0, 1) = (-(sin(phi)*sin(theta)*sin(psi)) - (cos(phi)*cos(psi)));
+	RbgPrime(0, 2) = (-(cos(phi)*sin(theta)*sin(psi)) + (sin(phi)*cos(psi)));
+
+	RbgPrime(1, 0) = (cos(theta)*cos(psi));
+	RbgPrime(1, 1) = (sin(phi)*sin(theta)*cos(psi)) - (cos(phi)*sin(psi));
+	RbgPrime(1, 2) = (cos(phi)*sin(theta)*cos(psi)) + (sin(phi)*sin(psi));
+
+	RbgPrime(2, 0) = 0;
+	RbgPrime(2, 1) = 0;
+	RbgPrime(2, 2) = 0;
 
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
@@ -254,7 +270,17 @@ void QuadEstimatorEKF::Predict(float dt, V3F accel, V3F gyro)
   gPrime.setIdentity();
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
+  // From: Estimation for Quadrotors - Eq. 51
+	gPrime(0, 3) = dt;
+	gPrime(1, 4) = dt;
+	gPrime(2, 5) = dt;
 
+	gPrime(3, 6) = (RbgPrime(0)*accel).sum()*dt;
+	gPrime(4, 6) = (RbgPrime(1)*accel).sum()*dt;
+	gPrime(5, 6) = (RbgPrime(2)*accel).sum()*dt;
+
+	// From: Estimation for Quadrotors - Section 3
+	ekfCov = gPrime*ekfCov*gPrime.transpose() + Q;
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 

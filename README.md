@@ -122,8 +122,6 @@ Observe that there’s quite a bit of error in attitude estimation.
 In the screenshot above the attitude estimation using linear scheme (left) and using the improved nonlinear scheme (right). Note that Y axis on error is much greater on left.
 
 ***Success criteria:*** *Your attitude estimator needs to get within 0.1 rad for each of the Euler angles for at least 3 seconds.*
-
-
 #### Task 2 Completion
 
 To complete this task the following formulas from the lectures where used:
@@ -137,13 +135,11 @@ below shows that with this implementation the test is passed.
 
 ![Complementary Filter Math](images/task2.png)
 
-**Hint: see section 7.1.2 of [Estimation for Quadrotors](https://www.overleaf.com/read/vymfngphcccj) for a refresher on a good non-linear complimentary filter for attitude using quaternions.**
-
+**See section 7.1.2 of [Estimation for Quadrotors](https://www.overleaf.com/read/vymfngphcccj) for a refresher on a good non-linear complimentary filter for attitude using quaternions.**
 
 ### Step 3: Prediction Step ###
 
 In this next step you will be implementing the prediction step of your filter.
-
 
 1. Run scenario `08_PredictState`.  This scenario is configured to use a perfect IMU (only an IMU). Due to the sensitivity of double-integration to attitude errors, we've made the accelerometer update very insignificant (`QuadEstimatorEKF.attitudeTau = 100`).  The plots on this simulation show element of your estimated state and that of the true state.  At the moment you should see that your estimated state does not follow the true state.
 
@@ -164,6 +160,9 @@ You will notice however that the estimated covariance (white bounds) currently d
 
 **Hint: recall that the control input is the acceleration!**
 
+After a tuning the obtained results is shown in the image above. It looks very similar to the correct
+scenario presented in the previous images.
+
 5. Run your covariance prediction and tune the `QPosXYStd` and the `QVelXYStd` process parameters in `QuadEstimatorEKF.txt` to try to capture the magnitude of the error you see. Note that as error grows our simplified model will not capture the real error dynamics (for example, specifically, coming from attitude errors), therefore  try to make it look reasonable only for a relatively short prediction period (the scenario is set for one second).  A good solution looks as follows:
 
 ![good covariance](images/predict-good-cov.png)
@@ -182,6 +181,18 @@ Another set of bad examples is shown below for having a `QVelXYStd` too large (f
 
 ***Success criteria:*** *This step doesn't have any specific measurable criteria being checked.*
 
+#### Task 3 Realization
+
+For this task the state vector containing `x,y,z,x_dot,y_dot,z_dot,yaw` is advanced using
+the state transition matrix presented in the lectures (Eq 49). This is a straightforward integration for `x,y,z`. For `x_dot,y_dot,z_dot` we need to convert the acceleration from the body frame to the inertial frame. We used the provided quaternion to achieve this.
+
+With the inertial acceleration we are able to advance the state for `x_dot,y_dot,z_dot`. For `z_dot` we take care to subtract the minus term coming from gravity.
+
+The second part of this task is to create the partial derivative matrix that is needed for the EFK.
+The matrix is obtained from the lectures and the corresponding entries are filled in the `GetRbgPrime`
+function. Then this funcion is used in the `Predict` function. Since the state has already been predicted, is this function all the is left to predict is the covariance matrix.
+
+![Predict function results](images/task2.png)
 
 ### Step 4: Magnetometer Update ###
 
