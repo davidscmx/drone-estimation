@@ -244,6 +244,14 @@ This is a simple measurement update taken from the `Estimation for Quadrotors` d
 
 At this point, congratulations on having a working estimator!
 
+
+#### Task 5 Realization
+
+Task 5 is implemented with a simple update call. The image below shows the green box showing that the path
+of the drone stays within an error of < 1m.
+
+![GPS Update](images/task5.png)
+
 ### Step 6: Adding Your Controller ###
 
 Up to this point, we have been working with a controller that has been relaxed to work with an estimated state instead of a real state.  So now, you will see how well your controller performs and de-tune your controller accordingly.
@@ -258,6 +266,10 @@ Up to this point, we have been working with a controller that has been relaxed t
 
 ***Success criteria:*** *Your objective is to complete the entire simulation cycle with estimated position error of < 1m.*
 
+
+The code from the previous project was placed in the correspinding files. There was very little tuning needed. Below an image of the test passing.
+
+![GPS Update](images/task6.png)
 
 ## Tips and Tricks ##
 

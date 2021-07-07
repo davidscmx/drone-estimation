@@ -4,7 +4,9 @@
 # X=Y sets X to Y. Y may be a string, float, or list of 3 floats
 ############################################################################
 
-[QuadControlParams] 
+
+#[Quad] begins a parameter namespace. Any variable written afterwards becomes Quad.<variablename> in the source code.
+[QuadControlParams]
 
 UseIdealEstimator=1
 
@@ -19,20 +21,24 @@ minMotorThrust = .1
 maxMotorThrust = 4.5
 
 # Position control gains
-kpPosXY = 2
-kpPosZ = 2
-KiPosZ = 50
+kpPosXY = 30
+kpPosZ = 50
+KiPosZ = 40
+
+# Hint: For a second order system, such as the one for this quadcopter,
+# the velocity gain (kpVelXY and kpVelZ) should be at least ~3-4 times greater
+# than the respective position gain (kpPosXY and kpPosZ).
 
 # Velocity control gains
-kpVelXY = 8
-kpVelZ = 8
+kpVelXY = 12
+kpVelZ = 10
 
 # Angle control gains
-kpBank = 12
-kpYaw = 3
+kpBank = 15
+kpYaw = 2
 
 # Angle rate gains
-kpPQR = 70, 70, 15
+kpPQR = 54, 95, 3
 
 # limits
 maxAscentRate = 5

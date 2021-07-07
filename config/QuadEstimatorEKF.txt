@@ -6,16 +6,16 @@ InitStdDevs = .1, .1, .3, .1, .1, .3, .05
 # note that the process covariance matrix is diag(pow(QStd,2))*dtIMU
 
 QPosXYStd = 0.001
-QPosZStd = .05
-QVelXYStd = 0.09
-QVelZStd = .1
-QYawStd = .05
+QPosZStd = .01
+QVelXYStd = 0.4
+QVelZStd = .01
+QYawStd = .09
 
 # GPS measurement std deviations
 GPSPosXYStd = 1
-GPSPosZStd = 3
+GPSPosZStd = 5
 GPSVelXYStd = .1
-GPSVelZStd = .3
+GPSVelZStd = .1
 
 # Magnetometer
 MagYawStd = .1
