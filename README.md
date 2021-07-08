@@ -124,12 +124,9 @@ To complete this task the following formulas from the lectures where used:
 
 ![Complementary Filter Math](images/comp_filter_math.png)
 
-But first we convert the body rates from the gyro to the world-coordinate Euler angles and we use these to get the `predictedRoll` and `predictedPitch`.
-The measured roll and pitch is obtained from the accelerometer values. The figure below shows that with this implementation the test is passed.
+But first we convert the body rates from the gyro to the world-coordinate Euler angles and we use these to get the `predictedRoll` and `predictedPitch`. The measured roll and pitch is obtained from the accelerometer values. The figure below shows that with this implementation the test is passed.
 
 ![Complementary Filter Math](images/task2.png)
-
-**See section 7.1.2 of [Estimation for Quadrotors](https://www.overleaf.com/read/vymfngphcccj) for a refresher on a good non-linear complimentary filter for attitude using quaternions.**
 
 ### Step 3: Prediction Step ###
 
@@ -137,22 +134,7 @@ In this next step we implement the prediction step of the filter.
 
 1. Run scenario `08_PredictState`.  This scenario is configured to use a perfect IMU (only an IMU). Due to the sensitivity of double-integration to attitude errors, we've made the accelerometer update very insignificant (`QuadEstimatorEKF.attitudeTau = 100`).  The plots on this simulation show element of your estimated state and that of the true state.  At the moment you should see that your estimated state does not follow the true state.
 
-2. In `QuadEstimatorEKF.cpp`, the state prediction step in the `PredictState()` functon is implemented. We check this is correct by running the scenario `08_PredictState`. Here it is observed  the estimator state track the actual state, with only reasonably slow drift, as shown in the figure below:
-
-![predict drift](images/predict-slow-drift.png)
-
-3. Now we introduce a realistic IMU, one with noise.  Run scenario `09_PredictionCov`. We see a small fleet of quadcopter all using your prediction code to integrate forward. We observed two plots:
-   - The top graph shows 10 (prediction-only) position X estimates
-   - The bottom graph shows 10 (prediction-only) velocity estimates
-You will notice however that the estimated covariance (white bounds) currently do not capture the growing errors.
-
-4. In `QuadEstimatorEKF.cpp`, calculate the partial derivative of the body-to-global rotation matrix in the function `GetRbgPrime()`.  Once you have that function implement, implement the rest of the prediction step (predict the state covariance forward) in `Predict()`.
-
-After a tuning the obtained results is shown in the image above. It looks very similar to the correct scenario presented in the previous images.
-
-5. Run your covariance prediction and tune the `QPosXYStd` and the `QVelXYStd` process parameters in `QuadEstimatorEKF.txt` to try to capture the magnitude of the error you see. Note that as error grows our simplified model will not capture the real error dynamics (for example, specifically, coming from attitude errors), therefore  try to make it look reasonable only for a relatively short prediction period (the scenario is set for one second).
 #### Task 3 Implementation
-
 For this task the state vector containing `x,y,z,x_dot,y_dot,z_dot,yaw` is advanced using
 the state transition matrix presented in the lectures (Eq 49). This is a straightforward integration for `x,y,z`. For `x_dot,y_dot,z_dot` we need to convert the acceleration from the body frame to the inertial frame. We used the provided quaternion to achieve this.
 
