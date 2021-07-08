@@ -153,7 +153,12 @@ Up until now we've only used the accelerometer and gyro for our state estimation
 1. Run scenario `10_MagUpdate`.  This scenario uses a realistic IMU, but the magnetometer update hasn’t been implemented yet. As a result, you will notice that the estimate yaw is drifting away from the real value (and the estimated standard deviation is also increasing).  Note that in this case the plot is showing you the estimated yaw error (`quad.est.e.yaw`), which is drifting away from zero as the simulation runs.  You should also see the estimated standard deviation of that state (white boundary) is also increasing.
 #### Task 4 Implementation
 
-This is a simple measurement update taken from the `Estimation for Quadrotors` document. Below an image of the result:
+
+The `UpdateFromMag` function is implemented following the equations below:
+
+![Magnetometer equations](images/mag_eqs.png)
+
+Below an image of the result:
 
 ![Predict function results](images/task4_yaw.png)
 
@@ -162,6 +167,9 @@ This is a simple measurement update taken from the `Estimation for Quadrotors` d
 1. Run scenario `11_GPSUpdate`.  At the moment this scenario is using both an ideal estimator and and ideal IMU.  Even with these ideal elements, watch the position and velocity errors (bottom right). As you see they are drifting away, since GPS update is not yet implemented.
 
 2. Let's change to using your estimator by setting `Quad.UseIdealEstimator` to 0 in `config/11_GPSUpdate.txt`.  Rerun the scenario to get an idea of how well your estimator work with an ideal IMU.
+
+The `UpdateFromGPS` function is implemented following the equations below:
+![Predict function results](images/GPS_eqs.png)
 
 3. Now repeat with realistic IMU by commenting out these lines in `config/11_GPSUpdate.txt`:
 ```
