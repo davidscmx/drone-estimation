@@ -79,7 +79,10 @@ parts. In these two parts we calculate the state and the error of the systems
    The first part of the measurement update, we get a very important quantity
    called the residual which is the differece between the estimated measurements is subtracted from the measurement value. Then we calculate
    the Kalman gain, which in very simple terms looks like this:
-   `estimated_error / measured_error + estimated_error`, which tell us how much we will thurst the estimated value more over the measured value.
+   ```
+   estimated_error / measured_error + estimated_error
+   ```
+   which tell us how much we will thurst the estimated value more over the measured value.
 
    We then update the state and covariance matrices using the Kalman Gain.
    In this step we also take into account the noise that may be present in the sensors
